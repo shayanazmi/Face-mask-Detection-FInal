@@ -1,0 +1,13 @@
+# Ignore the data folder as requested
+data/
+datasets/
+
+# Ignore Python environment and cache
+__pycache__/
+*.py[cod]
+venv/
+.env
+
+# Ignore IDE settings
+.vscode/
+.idea/
