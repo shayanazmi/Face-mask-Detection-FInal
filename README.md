@@ -1,51 +1,153 @@
-# Face Mask Detection using Transfer Learning using VGG16 😷
+# Face Mask Detection System
 
-[![Python](https://img.shields.io/badge/Python-3.10-blue.svg)](https://www.python.org/)
-[![TensorFlow](https://img.shields.io/badge/TensorFlow-2.12-orange.svg)](https://tensorflow.org/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red.svg)](https://streamlit.io/)
-[![OpenCV](https://img.shields.io/badge/OpenCV-4.x-green.svg)](https://opencv.org/)
+### Real-Time Face Mask Detection using VGG16 Transfer Learning and Haar-Cascade
 
-A professional real-time Face Mask Detection system featuring an interactive AI Dashboard. This project utilizes **VGG16 Transfer Learning** for classification and **Haar Cascades** for face localization, achieving a high **93% classification accuracy**.
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange.svg)](https://www.tensorflow.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.x-red.svg)](https://streamlit.io/)
+[![Accuracy](https://img.shields.io/badge/Accuracy-99%25-green.svg)]()
 
-## 📊 Project Highlights
-- **93% Test Accuracy:** Rigorously evaluated on a 1,326-image unseen test set.
-- **AI Dashboard:** A Streamlit-based interface providing real-time compliance metrics, confidence trends, and latency monitoring.
-- **Advanced Preprocessing:** Custom logic to maintain image aspect ratio through resizing and black-padding, ensuring zero distortion for the VGG16 model.
-- **Active Learning:** Built-in feedback system allows users to mark detections as "Correct" or "Incorrect," automatically saving data for future retraining.
+---
 
-## 📁 Project Structure & Scripts
-| File | Description |
-| :--- | :--- |
-| **`data_code_ver2.py`** | **Training Core:** Handles 70/15/15 data splitting, aspect ratio normalization, and VGG16 Transfer Learning training. |
-| **`new_inference_code.py`** | **AI Dashboard:** The primary Streamlit application for real-time monitoring and advanced analytics. |
-| **`ver2_evaluation.py`** | **Advanced Metrics:** Suite to calculate ROC-AUC, Mean IoU, Dice Coefficient, and mAP. |
-| **`live_webcam.py`** | **Direct Inference:** Standard script focused on core webcam detection logic. |
-| **`my_mask_detector_v2_2.h5`** | **The Brain:** The final trained VGG16-based model weights. |
-| **`haarcascade_frontalface_default.xml`** | **Face Localization:** Pre-trained XML used for high-speed face detection. |
+## 🎯 Overview
 
-## 📈 Model Performance (V2.2 Evaluation)
+A hybrid face mask detection system combining **Haar-Cascade** for fast face detection and **VGG16** for accurate classification. Achieves **99% accuracy** with real-time performance via Streamlit dashboard.
 
-The model delivers robust performance across both classes:
+**Key Highlights:**
+- Two-stage detection: Haar-Cascade (face localization) → VGG16 (mask classification)
+- Transfer learning with frozen VGG16 base + custom classification head
+- SMOTE-balanced dataset from PyImageSearch & Kaggle sources
+- Real-time Streamlit dashboard with live metrics
 
-| Class | Precision | Recall | F1-Score |
-| :--- | :--- | :--- | :--- |
-| **With Mask** | 0.95 | 0.90 | 0.93 |
-| **Without Mask** | 0.91 | 0.96 | 0.93 |
+---
 
-**Object Detection Metrics:**
-- **Mean IoU (Overlap):** 0.3125
-- **Dice Coefficient:** 0.4762
-- **Mean Absolute Error:** 10.62 pixels
 
-## 🧠 Technical Workflow
-1. **Preprocessing:** Images are normalized to $224 \times 224$ pixels while preserving aspect ratio.
-2. **Architecture:** Base VGG16 (ImageNet weights) with a custom head:
-   - `Flatten` → `Dense(128, ReLU)` → `Dropout(0.5)` → `Dense(1, Sigmoid)`
-3. **Inference:** Haar Cascade detects face ROIs $\rightarrow$ VGG16 classifies the ROI $\rightarrow$ Result displayed via Streamlit with a **0.65 classification threshold**.
 
-## 📦 Installation & Usage
+## 🔧 Installation
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/shayanazmi/Face_Mask_Detection_using_Transfer_Learning_CNN_HaarCascade.git
-   cd Face_Mask_Detection_using_Transfer_Learning_CNN_HaarCascade
+```bash
+# Clone repository
+git clone https://github.com/shayanazmi/Face-mask-Detection-FInal.git
+cd Face-mask-Detection-FInal
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+---
+
+## 🚀 Usage
+
+### Real-Time Detection Dashboard
+
+```bash
+streamlit run streamlit_app/app.py
+```
+
+### Train Model
+
+```bash
+python src/train.py --epochs 20 --batch-size 32
+```
+
+### Evaluate Model
+
+```bash
+python src/evaluate.py --model models/best_mask_model.h5
+```
+
+---
+
+## 🧠 Model Architecture
+
+```
+Input (224×224×3)
+    ↓
+VGG16 Base (Frozen) - 14.7M params
+    ↓
+Flatten (25,088)
+    ↓
+Dense (128, ReLU) - 3.2M params
+    ↓
+Dropout (0.5)
+    ↓
+Output (1, Sigmoid)
+```
+
+### Hyperparameters
+
+| Parameter | Value |
+|-----------|-------|
+| Optimizer | Adam |
+| Learning Rate | 1e-4 |
+| Batch Size | 32 |
+| Epochs | 20 |
+| Dropout | 0.5 |
+| Decision Threshold | 0.65 |
+
+---
+
+## 📊 Dataset
+
+| Split | With Mask | Without Mask | Total |
+|-------|-----------|--------------|-------|
+| Train | 3,058 | 3,123 | 6,181 |
+| Validation | 655 | 669 | 1,324 |
+| Test | 656 | 670 | 1,326 |
+
+**Sources:** PyImageSearch COVID-19 Dataset + Kaggle Face Mask Dataset
+
+**Preprocessing:** SMOTE balancing, 224×224 resize, normalization, augmentation
+
+---
+
+## 📈 Results
+
+| Metric | Score |
+|--------|-------|
+| Accuracy | 99% |
+| Precision | 99% |
+| Recall | 99% |
+| F1-Score | 99% |
+| AUC-ROC | 0.9987 |
+
+### Confusion Matrix
+
+```
+              Predicted
+            Mask  No Mask
+Actual Mask  649      7
+      No Mask   8    662
+```
+
+---
+
+## 🛠️ Technologies
+
+- **TensorFlow/Keras** - Deep learning
+- **OpenCV** - Haar-Cascade face detection
+- **Streamlit** - Real-time dashboard
+- **Scikit-learn** - SMOTE, metrics
+- **NumPy/Pandas** - Data processing
+
+
+---
+
+## 📧 Contact
+
+**Shayan Azmi** - [@shayanazmi](https://github.com/shayanazmi)
+
+**Repository:** https://github.com/shayanazmi/Face-mask-Detection-FInal
+
+---
+
+<div align="center">
+
+⭐ **Star this repo if you found it helpful!**
+
+</div>
+```
